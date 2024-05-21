@@ -72,7 +72,7 @@ wss.on('connection', (ws) => {
 
       wss.clients.forEach(function each(client) {
         if (client.readyState === WebSocket.OPEN) {
-          client.send(place);
+          client.send(JSON.stringify(place));
         }
       });
     }

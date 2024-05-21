@@ -57,13 +57,25 @@ const wss = new WebSocket.Server({
   noServer: true,
 });
 
+function isValid(data) {
+  return data.x >= 0 && data.y >= 0 && data.x < size && data.y < size && colors.includes(data.color);
+}
+
 wss.on('connection', (ws) => {
   ws.on('error', console.error);
 
   ws.on('message', function incoming(message) {
     const data = JSON.parse(message);
-    place[data.x + data.y * size] = data.color;
-    console.log('received: %s', message);
+    if (isValid(data)) {
+      place[data.x + data.y * size] = data.color;
+      console.log('received: %s', message);
+
+      wss.clients.forEach(function each(client) {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(place);
+        }
+      });
+    }
   });
 
   ws.send(JSON.stringify(place));

@@ -61,6 +61,8 @@ wss.on('connection', (ws) => {
   ws.on('error', console.error);
 
   ws.on('message', function incoming(message) {
+    const data = JSON.parse(message);
+    place[data.x + data.y * size] = data.color;
     console.log('received: %s', message);
   });
 
